@@ -5,27 +5,30 @@
 from PIL import ImageColor
 import cv2
 import numpy as np
+import random
 
 COLOR = [
-    "#fc1c1a",
-    "#177ABC",
-    "#94B6D2",
-    "#A5AB81",
-    "#DD8047",
-    "#6b425e",
-    "#e26d5a",
-    "#c92c48",
-    "#6a506d",
-    "#ffc900",
-    "#ffffff",
-    "#000000",
-    "#49ff00",
+    '#fc1c1a',
+    '#177ABC',
+    '#94B6D2',
+    '#A5AB81',
+    '#DD8047',
+    '#6b425e',
+    '#e26d5a',
+    '#c92c48',
+    '#6a506d',
+    '#ffc900',
+    '#ffffff',
+    '#000000',
+    '#49ff00',
 ]
 
 
-def color_the_mask(mask_image, color, intensity):
-    assert 0 <= intensity <= 1, "intensity should be between 0 and 1"
-    RGB_color = ImageColor.getcolor(color, "RGB")
+def color_the_mask(mask_image, intensity):
+    assert 0 <= intensity <= 1, 'intensity should be between 0 and 1'
+    global COLOR
+    color = random.choice(COLOR)
+    RGB_color = ImageColor.getcolor(color, 'RGB')
     RGB_color = (RGB_color[2], RGB_color[1], RGB_color[0])
     orig_shape = mask_image.shape
     bit_mask = mask_image[:, :, 3]
@@ -41,7 +44,7 @@ def color_the_mask(mask_image, color, intensity):
 
 
 def texture_the_mask(mask_image, texture_path, intensity):
-    assert 0 <= intensity <= 1, "intensity should be between 0 and 1"
+    assert 0 <= intensity <= 1, 'intensity should be between 0 and 1'
     orig_shape = mask_image.shape
     bit_mask = mask_image[:, :, 3]
     mask_image = mask_image[:, :, 0:3]

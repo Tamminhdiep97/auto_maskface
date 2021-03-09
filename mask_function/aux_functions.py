@@ -11,7 +11,7 @@ from tqdm import tqdm
 from . import read_cfg  # import read_cfg
 from . import fit_ellipse
 import random
-from utils.create_mask import texture_the_mask, color_the_mask
+from .create_mask import texture_the_mask, color_the_mask
 from imutils import face_utils
 import numpy as np
 
@@ -289,7 +289,7 @@ def mask_face(image, face_location, six_points, angle, args, type="surgical"):
 
     if args.color:
         # Apply color to mask
-        img = color_the_mask(img, args.color, args.color_weight)
+        img = color_the_mask(img, args.color_weight)
 
     mask_line = np.float32(
         [cfg.mask_a, cfg.mask_b, cfg.mask_c, cfg.mask_f, cfg.mask_e, cfg.mask_d]
@@ -532,18 +532,15 @@ def rect_to_bb(rect):
     x2 = rect.right()
     y1 = rect.top()
     y2 = rect.bottom()
-    return (x1, x2, y2, x1)
+    return (x1, y1, x2, y2)
 
 
-def mask_image(image_path, args):
+def mask_image(detector, face_locations, image, args):  # image_path=None, args=None):
     # Read the image
-    image = cv2.imread(image_path)
     original_image = image.copy()
     # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = image
-    face_locations = args.detector(gray, 1)
     mask_type = args.mask_type
-    verbose = args.verbose
     if args.code:
         ind = random.randint(0, len(args.code_count) - 1)
         mask_dict = args.mask_dict_of_dict[ind]
@@ -552,30 +549,31 @@ def mask_image(image_path, args):
         args.pattern = mask_dict["texture"]
         args.code_count[ind] += 1
 
-    elif mask_type == "random":
-        available_mask_types = get_available_mask_types()
-        mask_type = random.choice(available_mask_types)
-
-    if verbose:
-        tqdm.write("Faces found: {:2d}".format(len(face_locations)))
     # Process each face in the image
     masked_images = []
     mask_binary_array = []
     mask = []
+    mask_type_temp = mask_type
     for (i, face_location) in enumerate(face_locations):
-        shape = args.predictor(gray, face_location)
+        shape = detector.predictor(gray, face_location)
         shape = face_utils.shape_to_np(shape)
         face_landmarks = shape_to_landmarks(shape)
         face_location = rect_to_bb(face_location)
         # draw_landmarks(face_landmarks, image)
         six_points_on_face, angle = get_six_points(face_landmarks, image)
         mask = []
-        if mask_type != "all":
+        if mask_type != 'all':
             if len(masked_images) > 0:
                 image = masked_images.pop(0)
+            if mask_type == 'random':
+                available_mask_types = get_available_mask_types()
+                mask_type = random.choice(available_mask_types)
+
             image, mask_binary = mask_face(image, face_location,
                                            six_points_on_face, angle, args,
                                            type=mask_type)
+            if mask_type_temp == 'random':
+                mask_type = mask_type_temp
             # compress to face tight
             # face_height = face_location[2] - face_location[0]
             # face_width = face_location[1] - face_location[3]
@@ -631,19 +629,3 @@ def get_available_mask_types(config_filename="masks/masks.cfg"):
 
     return available_mask_types
 
-
-def print_orderly(str, n):
-    # print("")
-    hyphens = "-" * int((n - len(str)) / 2)
-    str_p = hyphens + " " + str + " " + hyphens
-    hyphens_bar = "-" * len(str_p)
-    print(hyphens_bar)
-    print(str_p)
-    print(hyphens_bar)
-
-
-def display_MaskTheFace():
-    with open("utils/display.txt", "r") as file:
-        for line in file:
-            cc = 1
-            print(line, end="")
