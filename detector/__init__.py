@@ -10,16 +10,14 @@ import cv2
 from PIL import Image
 
 
-def download_dlib_model():
+def download_dlib_model(path_to_dlib_model):
     print("Get dlib model", 60)
     dlib_model_link = "http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2"
     print("Downloading dlib model...")
     with requests.get(dlib_model_link, stream=True) as r:
         print("Zip file size: ", np.round(len(r.content) / 1024 / 1024, 2),
               "Mb")
-        current_location = os.getcwd()
-        destination = (current_location + os.path.sep + "dlib_models" +
-                       os.path.sep +
+        destination = ('dlib_detector' + os.path.sep +
                        "shape_predictor_68_face_landmarks.dat.bz2"
                        )
         if not os.path.exists(destination.rsplit(os.path.sep, 1)[0]):
@@ -29,28 +27,25 @@ def download_dlib_model():
             for chunk in r.iter_content(chunk_size=32678):
                 fd.write(chunk)
     print("Extracting dlib model...")
-    with bz2.BZ2File(destination) as fr, open(
-        str(current_location)+"/dlib_models/shape_predictor_68_face_landmarks.dat", "wb"
-    ) as fw:
+    with bz2.BZ2File(destination) as fr, open(path_to_dlib_model, 'wb') as fw:
         shutil.copyfileobj(fr, fw)
     print("Saved: ", destination)
     print("done", 60)
-
     os.remove(destination)
 
 
-def init(conf):
-    path_to_dlib_model = os.path.join(conf.detector_root, 'dlib_detector', 'shape_predictor_68_face_landmarks.dat')
+def init():
+    path_to_dlib_model = os.path.join('dlib_detector', 'shape_predictor_68_face_landmarks.dat')
     if not os.path.exists(path_to_dlib_model):
-        download_dlib_model(conf.detector_root, path_to_dlib_model)
+        download_dlib_model(path_to_dlib_model)
     face_detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor(path_to_dlib_model)
     return face_detector, predictor
 
 
 class DLIB_DETECTOR(object):
-    def __init__(self, conf):
-        self.face_detector, self.predictor = init(conf)
+    def __init__(self):
+        self.face_detector, self.predictor = init()
         self.faces = dlib.full_object_detections()
 
     def rect_to_bb(self, rect):
