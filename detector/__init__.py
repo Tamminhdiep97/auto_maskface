@@ -17,7 +17,7 @@ def download_dlib_model(path_to_dlib_model):
     with requests.get(dlib_model_link, stream=True) as r:
         print("Zip file size: ", np.round(len(r.content) / 1024 / 1024, 2),
               "Mb")
-        destination = ('dlib_detector' + os.path.sep +
+        destination = ('detector' + os.path.sep +
                        "shape_predictor_68_face_landmarks.dat.bz2"
                        )
         if not os.path.exists(destination.rsplit(os.path.sep, 1)[0]):
@@ -35,7 +35,7 @@ def download_dlib_model(path_to_dlib_model):
 
 
 def init():
-    path_to_dlib_model = os.path.join('dlib_detector', 'shape_predictor_68_face_landmarks.dat')
+    path_to_dlib_model = os.path.join('detector', 'shape_predictor_68_face_landmarks.dat')
     if not os.path.exists(path_to_dlib_model):
         download_dlib_model(path_to_dlib_model)
     face_detector = dlib.get_frontal_face_detector()
