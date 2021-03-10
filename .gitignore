@@ -5,7 +5,10 @@ __pycache__/
 
 # C extensions
 *.so
-
+# DS_Store
+.DS_Store
+# dat extensions
+*.dat
 # Distribution / packaging
 .Python
 build/
