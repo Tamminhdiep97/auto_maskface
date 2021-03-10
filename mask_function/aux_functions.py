@@ -259,19 +259,18 @@ def mask_face(image, face_location, six_points, angle, args, type="surgical"):
     debug = False
 
     # Find the face angle
-    threshold = 13
+    threshold = 15
     if angle < -threshold:
         type += "_right"
     elif angle > threshold:
         type += "_left"
-
     face_height = face_location[2] - face_location[0]
     face_width = face_location[1] - face_location[3]
     # Read appropriate mask image
     w = image.shape[0]
     h = image.shape[1]
     if not "empty" in type and not "inpaint" in type:
-        cfg = read_cfg.read_cfg(config_filename="masks/masks.cfg", mask_type=type, verbose=False)
+        cfg = read_cfg.read_cfg(config_filename="auto_maskface/masks/masks.cfg", mask_type=type, verbose=False)
     else:
         if "left" in type:
             str = "surgical_blue_left"
@@ -279,7 +278,7 @@ def mask_face(image, face_location, six_points, angle, args, type="surgical"):
             str = "surgical_blue_right"
         else:
             str = "surgical_blue"
-        cfg = read_cfg.read_cfg(config_filename="masks/masks.cfg", mask_type=str, verbose=False)
+        cfg = read_cfg.read_cfg(config_filename="auto_maskface/masks/masks.cfg", mask_type=str, verbose=False)
     img = cv2.imread(cfg.template, cv2.IMREAD_UNCHANGED)
 
     # Process the mask if necessary
@@ -336,13 +335,11 @@ def mask_face(image, face_location, six_points, angle, args, type="surgical"):
 
     if debug:
         for i in six_points:
-            cv2.circle(out_img, (i[0], i[1]), radius=4, color=(0, 0, 255), thickness=-1)
+            cv2.circle(out_img, (i[0], i[1]), radius=4, color=(0, 0, 255), thickness=3)
 
         for i in dst_mask_points:
             cv2.circle(
-                out_img, (i[0][0], i[0][1]), radius=4, color=(0, 255, 0), thickness=-1
-            )
-
+                out_img, (i[0][0], i[0][1]), radius=4, color=(0, 255, 0), thickness=3)
     return out_img, mask
 
 
@@ -615,7 +612,7 @@ def is_image(path):
         return False
 
 
-def get_available_mask_types(config_filename="masks/masks.cfg"):
+def get_available_mask_types(config_filename="auto_maskface/masks/masks.cfg"):
     parser = ConfigParser()
     parser.optionxform = str
     parser.read(config_filename)

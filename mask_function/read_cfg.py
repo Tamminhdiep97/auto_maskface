@@ -22,21 +22,14 @@ def ConvertIfStringIsInt(input_string):
         return input_string
 
 
-def read_cfg(config_filename="masks/masks.cfg", mask_type="surgical", verbose=False):
+def read_cfg(config_filename="auto_maskface/masks/masks.cfg", mask_type="surgical", verbose=False):
     parser = ConfigParser()
     parser.optionxform = str
     parser.read(config_filename)
     cfg = DotMap()
     section_name = mask_type
 
-    if verbose:
-        hyphens = "-" * int((80 - len(config_filename)) / 2)
-        print(hyphens + " " + config_filename + " " + hyphens)
-
     # for section_name in parser.sections():
-
-    if verbose:
-        print("[" + section_name + "]")
     for name, value in parser.items(section_name):
         value = ConvertIfStringIsInt(value)
         if name != "template":
@@ -44,7 +37,5 @@ def read_cfg(config_filename="masks/masks.cfg", mask_type="surgical", verbose=Fa
         else:
             cfg[name] = value
         spaces = " " * (30 - len(name))
-        if verbose:
-            print(name + ":" + spaces + str(cfg[name]))
 
     return cfg
