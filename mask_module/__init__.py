@@ -11,13 +11,11 @@ class AUTO_MASK(object):
     def mask(self, image):
         is_success = False
         face_locations, bboxes = self.detector.detect_faces(image)
-        masked_image, mask, mask_binary, original_image = self.function.mask_image(self.detector, face_locations, image, config)
+        masked_image, mask, mask_binary, original_image = self.function.mask_image(self.detector, face_locations, image, self.config)
         if len(masked_image) == 0:
-            # print('NOFACE')
             masked_image = image
         else:
             is_success = True
             masked_image = masked_image[0]
-            # print('YESFACE')
         return masked_image, is_success
 

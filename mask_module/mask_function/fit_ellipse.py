@@ -57,13 +57,3 @@ def ellipse_angle_of_rotation2(a):
         else:
             return np.pi/2 + np.arctan(2*b/(a-c))/2
 
-# a = fitEllipse(x,y)
-# center = ellipse_center(a)
-# #phi = ellipse_angle_of_rotation(a)
-# phi = ellipse_angle_of_rotation2(a)
-# axes = ellipse_axis_length(a)
-#
-# print("center = ",  center)
-# print("angle of rotation = ",  phi)
-# print("axes = ", axes)
-

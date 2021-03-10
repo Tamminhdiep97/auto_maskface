@@ -22,7 +22,7 @@ def ConvertIfStringIsInt(input_string):
         return input_string
 
 
-def read_cfg(config_filename="auto_maskface/masks/masks.cfg", mask_type="surgical", verbose=False):
+def read_cfg(config_filename='mask_module/masks/masks.cfg', mask_type='surgical', verbose=False):
     parser = ConfigParser()
     parser.optionxform = str
     parser.read(config_filename)
