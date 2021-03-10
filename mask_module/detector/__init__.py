@@ -17,9 +17,9 @@ def download_dlib_model(path_to_dlib_model):
     with requests.get(dlib_model_link, stream=True) as r:
         print("Zip file size: ", np.round(len(r.content) / 1024 / 1024, 2),
               "Mb")
-        destination = ('auto_maskface', 'detector' + os.path.sep +
-                       "shape_predictor_68_face_landmarks.dat.bz2"
-                       )
+        destination = ('mask_module' + os.path.sep + 'detector' +
+                       os.path.sep +
+                       'shape_predictor_68_face_landmarks.dat.bz2')
         if not os.path.exists(destination.rsplit(os.path.sep, 1)[0]):
             os.mkdir(destination.rsplit(os.path.sep, 1)[0])
         print("Saving dlib model...")
@@ -35,7 +35,7 @@ def download_dlib_model(path_to_dlib_model):
 
 
 def init():
-    path_to_dlib_model = os.path.join('auto_maskface', 'detector', 'shape_predictor_68_face_landmarks.dat')
+    path_to_dlib_model = os.path.join('mask_module', 'detector', 'shape_predictor_68_face_landmarks.dat')
     if not os.path.exists(path_to_dlib_model):
         download_dlib_model(path_to_dlib_model)
     face_detector = dlib.get_frontal_face_detector()

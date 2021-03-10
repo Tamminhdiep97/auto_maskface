@@ -62,10 +62,11 @@
 #     args.write_path = args.path + "_masked"
 #     return args
 # 
-mask_type = 'random'  # choices=["surgical", "N95", "KN95", "cloth", "gas", "inpaint", "random", "all"]
-pattern = ''
-pattern_weight = 0.5
+mask_type = 'random'  # choices=["surgical", "N95", "KN95", "cloth", "inpaint", "random"]
 color = True
-color_weight = 0.5
+color_weight = 0.3
 code = ''
 write_original_image = ''
+maskconfig_path = 'mask_module/masks/masks.cfg'
+pattern = False
+pattern_weight = False
